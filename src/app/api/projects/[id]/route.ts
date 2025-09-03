@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { encryptToString } from "@/lib/crypto";
+import { auditLog } from "@/lib/audit";
 
 const PROVIDERS = ["Scalingo", "CleverCloud", "Vercel", "Netlify"] as const;
 type Provider = (typeof PROVIDERS)[number];
@@ -56,6 +57,13 @@ export async function PUT(
       data,
       select: { id: true, name: true, provider: true, createdAt: true, updatedAt: true },
     });
+    await auditLog({
+      userId: user.id,
+      action: "project.update",
+      entity: "project",
+      entityId: updated.id,
+      meta: { name: updated.name, provider: updated.provider, apiKeyUpdated: Boolean(apiKey && apiKey.length > 0) },
+    });
     return NextResponse.json({ project: updated });
   } catch {
     return NextResponse.json({ error: "Update failed" }, { status: 400 });
@@ -70,6 +78,12 @@ export async function DELETE(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     await prisma.project.delete({ where: { id: params.id, userId: user.id } });
+    await auditLog({
+      userId: user.id,
+      action: "project.delete",
+      entity: "project",
+      entityId: params.id,
+    });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Delete failed" }, { status: 400 });

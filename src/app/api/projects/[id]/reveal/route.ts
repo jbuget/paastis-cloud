@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { decryptWithMetadata, encryptToString } from "@/lib/crypto";
+import { auditLog } from "@/lib/audit";
 
 export async function POST(
   _req: Request,
@@ -21,6 +22,7 @@ export async function POST(
     if (reenc !== project.apiKeyEnc) {
       await prisma.project.update({ where: { id: params.id }, data: { apiKeyEnc: reenc } });
     }
+    await auditLog({ userId: user.id, action: "project.reveal_key", entity: "project", entityId: params.id });
     return NextResponse.json({ apiKey: plaintext });
   } catch {
     return NextResponse.json({ error: "Cannot decrypt" }, { status: 500 });

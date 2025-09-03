@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { setSessionCookie } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { auditLog } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -35,6 +36,9 @@ export async function POST(req: Request) {
     }
 
     await setSessionCookie(normalizedEmail);
+    // Fire-and-forget audit (user may be null if just registered, but lookup succeeded)
+    const u = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (u) await auditLog({ userId: u.id, action: "auth.login", entity: "user", entityId: u.id });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Requête invalide" }, { status: 400 });

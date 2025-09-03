@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { setSessionCookie } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { auditLog } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -35,11 +36,12 @@ export async function POST(req: Request) {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    await prisma.user.create({
+    const created = await prisma.user.create({
       data: { email: normalizedEmail, passwordHash },
     });
 
     await setSessionCookie(normalizedEmail);
+    await auditLog({ userId: created.id, action: "auth.register", entity: "user", entityId: created.id });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Requête invalide" }, { status: 400 });

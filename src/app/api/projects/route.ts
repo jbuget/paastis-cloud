@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { encryptToString } from "@/lib/crypto";
+import { auditLog } from "@/lib/audit";
 
 const PROVIDERS = ["Scalingo", "CleverCloud", "Vercel", "Netlify"] as const;
 type Provider = (typeof PROVIDERS)[number];
@@ -45,6 +46,13 @@ export async function POST(req: Request) {
         userId: user.id,
       },
       select: { id: true, name: true, provider: true, createdAt: true, updatedAt: true },
+    });
+    await auditLog({
+      userId: user.id,
+      action: "project.create",
+      entity: "project",
+      entityId: proj.id,
+      meta: { name, provider },
     });
     return NextResponse.json({ project: proj }, { status: 201 });
   } catch {
