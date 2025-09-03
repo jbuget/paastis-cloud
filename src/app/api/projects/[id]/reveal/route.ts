@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { decryptFromString } from "@/lib/crypto";
+import { decryptWithMetadata, encryptToString } from "@/lib/crypto";
 
 export async function POST(
   _req: Request,
@@ -15,10 +15,14 @@ export async function POST(
   });
   if (!project) return NextResponse.json({ error: "Not found" }, { status: 404 });
   try {
-    const apiKey = decryptFromString(project.apiKeyEnc);
-    return NextResponse.json({ apiKey });
+    const { plaintext } = decryptWithMetadata(project.apiKeyEnc);
+    // Opportunistic re-encryption to current primary when revealed
+    const reenc = encryptToString(plaintext);
+    if (reenc !== project.apiKeyEnc) {
+      await prisma.project.update({ where: { id: params.id }, data: { apiKeyEnc: reenc } });
+    }
+    return NextResponse.json({ apiKey: plaintext });
   } catch {
     return NextResponse.json({ error: "Cannot decrypt" }, { status: 500 });
   }
 }
-

@@ -20,6 +20,7 @@ const eslintConfig = [
       "next-env.d.ts",
       ".history/**",
       "prisma/seed.js",
+      "scripts/*.js",
     ],
   },
 ];

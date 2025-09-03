@@ -92,3 +92,22 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 ```
 
 This runs `prisma migrate deploy` followed by `npm run seed` before starting the app.
+
+## Encryption Key Management
+
+- Default (legacy) encryption derives a key from `AUTH_SECRET`. For stronger security, configure a keyring:
+  - `ENCRYPTION_KEYS`: comma-separated `id:base64key` entries. Each key must be 32 bytes (AES-256) encoded in base64.
+  - `ENCRYPTION_PRIMARY_KEY_ID`: the key id used for new encryptions.
+- Ciphertext format with keyring: `v1:keyId:iv:ciphertext:tag` (base64 segments). Legacy entries use `iv:ciphertext:tag` and are still readable.
+- Rotation procedure:
+  1. Generate a new 32-byte key: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
+  2. Prepend it to `ENCRYPTION_KEYS` with a new id (e.g., `k3:...`) and set `ENCRYPTION_PRIMARY_KEY_ID=k3`.
+  3. Restart the app. New writes use `k3`. Revealing a key will opportunistically re-encrypt it with the primary.
+  4. Bulk re-encrypt existing records to the current primary key:
+     - Dry-run: `npm run keys:reenc -- --dry-run`
+     - Execute: `npm run keys:reenc`
+     - Options: `--batch-size=500` to tune batch size.
+  5. After confirming all keys are on the new key id, remove old keys from `ENCRYPTION_KEYS`.
+
+Notes:
+- The reveal endpoint never logs plaintext; consider adding rate limits and audit logs in production.

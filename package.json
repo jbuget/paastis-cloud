@@ -13,7 +13,8 @@
     "prisma:studio": "prisma studio",
     "seed": "prisma db seed",
     "db:setup": "prisma generate && prisma migrate dev --name init && prisma db seed",
-    "db:reset": "prisma migrate reset --force && prisma db seed"
+    "db:reset": "prisma migrate reset --force && prisma db seed",
+    "keys:reenc": "node scripts/reenc-api-keys.js"
   },
   "dependencies": {
     "react": "19.1.1",
