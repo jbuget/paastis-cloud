@@ -37,7 +37,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Database & Prisma
 
-- Local env: copy `.env.example` to `.env.local` and set `DATABASE_URL` & `AUTH_SECRET`. For Prisma CLI, also ensure `DATABASE_URL` is available (either export it or duplicate into a local `.env`).
+- Local env: copy `.env.example` to `.env` and set `DATABASE_URL`, `AUTH_SECRET`, and encryption keys.
+  - Single source of truth: both Next.js and Prisma read `.env`.
+  - Node maintenance scripts (e.g., key re-encryption) also auto-load `.env`.
 - Install deps: `npm install` (adds Prisma and bcryptjs).
 - Start Postgres via Docker: `docker compose up -d db`.
 - Create the schema:

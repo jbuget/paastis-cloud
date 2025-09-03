@@ -4,8 +4,30 @@
 // Bulk re-encrypt Project.apiKeyEnc to the current primary key.
 // Usage: node scripts/reenc-api-keys.js [--dry-run] [--batch-size=200]
 
+const fs = require("fs");
+const path = require("path");
 const { PrismaClient } = require("@prisma/client");
 const crypto = require("crypto");
+
+// Minimal .env loader to avoid extra deps
+function loadEnvFrom(file) {
+  try {
+    const p = path.resolve(process.cwd(), file);
+    if (!fs.existsSync(p)) return;
+    const content = fs.readFileSync(p, "utf8");
+    for (const line of content.split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+      if (!m) continue;
+      let [, k, v] = m;
+      if (v.startsWith('"') && v.endsWith('"')) v = v.slice(1, -1);
+      if (v.startsWith("'") && v.endsWith("'")) v = v.slice(1, -1);
+      if (!(k in process.env)) process.env[k] = v;
+    }
+  } catch {}
+}
+
+// Load .env by default so Node scripts have the same env as Prisma/Next
+loadEnvFrom(".env");
 
 const prisma = new PrismaClient();
 
@@ -143,4 +165,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-
