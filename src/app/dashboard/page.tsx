@@ -10,7 +10,15 @@ export default async function DashboardPage() {
     <div className="min-h-screen p-6 max-w-3xl mx-auto">
       <header className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <LogoutButton />
+        <div className="flex items-center gap-2">
+          <a
+            href="/projects"
+            className="h-9 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            Projets
+          </a>
+          <LogoutButton />
+        </div>
       </header>
       <main className="space-y-4">
         <p>Bienvenue, {user.email} 👋</p>
