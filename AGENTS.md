@@ -32,7 +32,6 @@
   - Checklist: `npm run lint` clean, `npm run build` succeeds, manual check in dev.
 
 ## Security & Configuration Tips
-- Secrets: Use `.env.local` for local secrets; never commit `.env*`. Client-exposed vars must be prefixed with `NEXT_PUBLIC_`.
+- Secrets: Use `.env` as the single env file for both Next.js and Prisma; never commit `.env*`. Client-exposed vars must be prefixed with `NEXT_PUBLIC_`.
 - Assets: Put static files in `public/` and reference as `/file.png`.
 - Accessibility: Address `next/core-web-vitals` ESLint suggestions (alt text, link semantics, headings).
-
