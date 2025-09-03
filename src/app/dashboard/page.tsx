@@ -2,6 +2,7 @@ import LogoutButton from "@/components/LogoutButton";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import ClientTime from "@/components/ClientTime";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -15,6 +16,13 @@ export default async function DashboardPage() {
     orderBy: { createdAt: "desc" },
     take: 10,
   });
+  const logsWithIso = logs.map((l) => ({
+    ...l,
+    createdAtIso:
+      l.createdAt instanceof Date
+        ? l.createdAt.toISOString()
+        : new Date(l.createdAt as unknown as string).toISOString(),
+  }));
 
   return (
     <div className="min-h-screen p-6 max-w-3xl mx-auto">
@@ -23,7 +31,7 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-2">
           <a
             href="/projects"
-            className="h-9 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+            className="inline-flex items-center justify-center h-9 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
           >
             Projets
           </a>
@@ -41,7 +49,7 @@ export default async function DashboardPage() {
             <h2 className="text-lg font-medium">Vos projets</h2>
             <a
               href="/projects/new"
-              className="h-8 px-3 rounded-md bg-foreground text-background"
+              className="inline-flex items-center justify-center h-8 px-3 rounded-md bg-foreground text-background"
             >
               Nouveau
             </a>
@@ -62,13 +70,13 @@ export default async function DashboardPage() {
                   <div className="flex gap-2">
                     <a
                       href={`/projects/${p.id}/edit`}
-                      className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+                      className="inline-flex items-center justify-center h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
                     >
                       Modifier
                     </a>
                     <a
                       href={`/projects/${p.id}/apps`}
-                      className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+                      className="inline-flex items-center justify-center h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
                     >
                       Apps
                     </a>
@@ -84,11 +92,11 @@ export default async function DashboardPage() {
 
         <section className="mt-8">
           <h2 className="text-lg font-medium mb-3">Dernières activités</h2>
-          {logs.length === 0 ? (
+          {logsWithIso.length === 0 ? (
             <p className="text-black/70 dark:text-white/70">Aucune activité récente.</p>
           ) : (
             <ul className="space-y-2">
-              {logs.map((l) => (
+              {logsWithIso.map((l) => (
                 <li key={l.id} className="text-sm flex items-center justify-between border border-black/10 dark:border-white/20 rounded-md p-2">
                   <div>
                     <span className="font-mono text-xs px-1 py-[1px] rounded bg-black/5 dark:bg-white/10 mr-2">{l.action}</span>
@@ -101,7 +109,7 @@ export default async function DashboardPage() {
                       <span>—</span>
                     )}
                   </div>
-                  <time className="text-xs text-black/60 dark:text-white/60">{new Date(l.createdAt).toLocaleString()}</time>
+                  <ClientTime iso={l.createdAtIso} className="text-xs text-black/60 dark:text-white/60" />
                 </li>
               ))}
             </ul>

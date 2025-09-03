@@ -45,14 +45,14 @@ export default function RevealApiKey({ id }: { id: string }) {
       <button
         onClick={onReveal}
         disabled={loading}
-        className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-60"
+        className="inline-flex items-center justify-center h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-60"
       >
         {value ? "Masquer" : loading ? "Chargement..." : "Révéler"}
       </button>
       <button
         onClick={onCopy}
         disabled={loading}
-        className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-60"
+        className="inline-flex items-center justify-center h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-60"
       >
         Copier
       </button>
@@ -65,4 +65,3 @@ export default function RevealApiKey({ id }: { id: string }) {
     </div>
   );
 }
-

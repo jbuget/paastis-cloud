@@ -24,7 +24,7 @@ export default async function ProjectsPage() {
         <h1 className="text-2xl font-semibold">Projets</h1>
         <Link
           href="/projects/new"
-          className="h-9 px-3 rounded-md bg-foreground text-background"
+          className="inline-flex items-center justify-center h-9 px-3 rounded-md bg-foreground text-background"
         >
           Nouveau projet
         </Link>
@@ -47,13 +47,13 @@ export default async function ProjectsPage() {
                 <Link
                   href={`/projects/${p.id}/edit`
                   }
-                  className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+                  className="inline-flex items-center justify-center h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
                 >
                   Modifier
                 </Link>
                 <Link
                   href={`/projects/${p.id}/apps`}
-                  className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+                  className="inline-flex items-center justify-center h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
                 >
                   Apps
                 </Link>

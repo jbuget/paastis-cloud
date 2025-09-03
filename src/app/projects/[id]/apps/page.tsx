@@ -44,7 +44,7 @@ export default async function ProjectAppsPage(props: { params: Promise<{ id: str
                   href={a.webUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+                  className="inline-flex items-center justify-center h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
                 >
                   Ouvrir
                 </a>

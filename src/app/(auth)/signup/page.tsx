@@ -71,7 +71,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-10 rounded-md bg-foreground text-background hover:opacity-90 disabled:opacity-60"
+            className="inline-flex items-center justify-center w-full h-10 rounded-md bg-foreground text-background hover:opacity-90 disabled:opacity-60"
           >
             {loading ? "Création..." : "Créer le compte"}
           </button>

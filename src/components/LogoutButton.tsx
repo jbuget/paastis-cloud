@@ -18,10 +18,9 @@ export default function LogoutButton() {
     <button
       onClick={onLogout}
       disabled={loading}
-      className="h-9 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+      className="inline-flex items-center justify-center h-9 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
     >
       {loading ? "Déconnexion..." : "Se déconnecter"}
     </button>
   );
 }
-

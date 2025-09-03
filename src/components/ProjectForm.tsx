@@ -101,13 +101,13 @@ export default function ProjectForm({
         <button
           type="submit"
           disabled={loading}
-          className="h-10 rounded-md bg-foreground text-background px-4 disabled:opacity-60"
+          className="inline-flex items-center justify-center h-10 rounded-md bg-foreground text-background px-4 disabled:opacity-60"
         >
           {loading ? "Enregistrement..." : mode === "create" ? "Créer" : "Enregistrer"}
         </button>
         <button
           type="button"
-          className="h-10 rounded-md border border-black/10 dark:border-white/20 px-4"
+          className="inline-flex items-center justify-center h-10 rounded-md border border-black/10 dark:border-white/20 px-4"
           onClick={() => router.back()}
         >
           Annuler
