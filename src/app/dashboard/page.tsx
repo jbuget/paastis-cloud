@@ -66,6 +66,12 @@ export default async function DashboardPage() {
                     >
                       Modifier
                     </a>
+                    <a
+                      href={`/projects/${p.id}/apps`}
+                      className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+                    >
+                      Apps
+                    </a>
                   </div>
                 </li>
               ))}

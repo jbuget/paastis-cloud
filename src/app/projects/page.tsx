@@ -51,6 +51,12 @@ export default async function ProjectsPage() {
                 >
                   Modifier
                 </Link>
+                <Link
+                  href={`/projects/${p.id}/apps`}
+                  className="h-8 px-3 rounded-md border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10"
+                >
+                  Apps
+                </Link>
                 <RevealApiKey id={p.id} />
                 <DeleteProjectButton id={p.id} />
               </div>

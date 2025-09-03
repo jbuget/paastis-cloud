@@ -4,15 +4,12 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
-export default async function EditProjectPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EditProjectPage(props: { params: Promise<{ id: string }> }) {
+  const { id } = await props.params;
   const user = await getCurrentUser();
   if (!user) notFound();
   const project = await prisma.project.findFirst({
-    where: { id: params.id, userId: user.id },
+    where: { id, userId: user.id },
   });
   if (!project) notFound();
 
