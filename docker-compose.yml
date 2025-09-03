@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16
+    container_name: paastis_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: paastis_web
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/appdb?schema=public
+      - AUTH_SECRET=${AUTH_SECRET:-change-me-please}
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+

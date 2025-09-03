@@ -1,0 +1,6 @@
+services:
+  web:
+    environment:
+      - NODE_ENV=development
+    command: sh -c "npx prisma migrate deploy && npm run seed && npm start"
+

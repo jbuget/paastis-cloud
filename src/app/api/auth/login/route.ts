@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { setSessionCookie } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
@@ -15,9 +17,24 @@ export async function POST(req: Request) {
       );
     }
 
-    // Démo: pas de vérification côté serveur (pas de base de données).
-    // On démarre la session si des identifiants sont fournis.
-    setSessionCookie(email.toLowerCase());
+    const normalizedEmail = email.toLowerCase();
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (!user) {
+      return NextResponse.json(
+        { error: "Identifiants invalides." },
+        { status: 401 }
+      );
+    }
+
+    const ok = await bcrypt.compare(password, user.passwordHash);
+    if (!ok) {
+      return NextResponse.json(
+        { error: "Identifiants invalides." },
+        { status: 401 }
+      );
+    }
+
+    await setSessionCookie(normalizedEmail);
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Requête invalide" }, { status: 400 });

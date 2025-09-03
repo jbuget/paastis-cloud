@@ -60,11 +60,12 @@ export function verifySession(token: string | undefined): SessionPayload | null 
   }
 }
 
-export function setSessionCookie(email: string, days = 7) {
+export async function setSessionCookie(email: string, days = 7) {
   const now = Math.floor(Date.now() / 1000);
   const exp = now + days * 24 * 60 * 60;
   const token = signSession({ sub: email, iat: now, exp });
-  cookies().set(SESSION_COOKIE, token, {
+  const store = await cookies();
+  store.set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -73,8 +74,9 @@ export function setSessionCookie(email: string, days = 7) {
   });
 }
 
-export function clearSessionCookie() {
-  cookies().set(SESSION_COOKIE, "", {
+export async function clearSessionCookie() {
+  const store = await cookies();
+  store.set(SESSION_COOKIE, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -83,12 +85,12 @@ export function clearSessionCookie() {
   });
 }
 
-export function getSessionFromCookies(): SessionPayload | null {
-  const token = cookies().get(SESSION_COOKIE)?.value;
+export async function getSessionFromCookies(): Promise<SessionPayload | null> {
+  const store = await cookies();
+  const token = store.get(SESSION_COOKIE)?.value;
   return verifySession(token);
 }
 
-export function isAuthenticated(): boolean {
-  return getSessionFromCookies() !== null;
+export async function isAuthenticated(): Promise<boolean> {
+  return (await getSessionFromCookies()) !== null;
 }
-

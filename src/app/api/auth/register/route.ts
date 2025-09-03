@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { setSessionCookie } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
@@ -22,9 +24,22 @@ export async function POST(req: Request) {
       );
     }
 
-    // Démo: on ne persiste pas l'utilisateur côté serveur.
-    // On crée directement une session.
-    setSessionCookie(email.toLowerCase());
+    const normalizedEmail = email.toLowerCase();
+
+    const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (existing) {
+      return NextResponse.json(
+        { error: "Un compte existe déjà avec cet email." },
+        { status: 409 }
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    await prisma.user.create({
+      data: { email: normalizedEmail, passwordHash },
+    });
+
+    await setSessionCookie(normalizedEmail);
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Requête invalide" }, { status: 400 });

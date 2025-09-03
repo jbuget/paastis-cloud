@@ -34,3 +34,61 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Database & Prisma
+
+- Local env: copy `.env.example` to `.env.local` and set `DATABASE_URL` & `AUTH_SECRET`. For Prisma CLI, also ensure `DATABASE_URL` is available (either export it or duplicate into a local `.env`).
+- Install deps: `npm install` (adds Prisma and bcryptjs).
+- Start Postgres via Docker: `docker compose up -d db`.
+- Create the schema:
+
+```
+npx prisma generate
+npx prisma migrate dev --name init
+```
+
+- Run app: `npm run dev` and open `/signup` to create a user.
+
+### Seed demo user
+
+Seed a demo account (idempotent upsert):
+
+```
+npm run seed
+# Uses defaults: DEMO_EMAIL=demo@local.test, DEMO_PASSWORD=demo1234
+
+# Optionally customize:
+DEMO_EMAIL=alice@example.com DEMO_PASSWORD=s3cret npm run seed
+```
+
+### One-step DB setup
+
+To generate the client, run initial migrations, and seed in one go:
+
+```
+npm run db:setup
+```
+
+Reset the DB and reseed (destructive):
+
+```
+npm run db:reset
+```
+
+### Docker Compose (full stack)
+
+Build and run the app and database together:
+
+```
+docker compose up --build
+```
+
+This starts Postgres on `5432` and the web app on `3000`. Migrations are applied on container start.
+
+For development, you can also auto-seed on container start using the dev override:
+
+```
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
+
+This runs `prisma migrate deploy` followed by `npm run seed` before starting the app.

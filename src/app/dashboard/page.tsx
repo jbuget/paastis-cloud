@@ -1,9 +1,10 @@
 import LogoutButton from "@/components/LogoutButton";
-import { getSessionFromCookies } from "@/lib/session";
+import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
-  const session = getSessionFromCookies();
-  const email = session?.sub;
+export default async function DashboardPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
 
   return (
     <div className="min-h-screen p-6 max-w-3xl mx-auto">
@@ -12,7 +13,7 @@ export default function DashboardPage() {
         <LogoutButton />
       </header>
       <main className="space-y-4">
-        <p>Bienvenue{email ? `, ${email}` : ""} 👋</p>
+        <p>Bienvenue, {user.email} 👋</p>
         <p className="text-sm text-black/70 dark:text-white/70">
           Ceci est une page protégée. Vous êtes connecté grâce à un cookie de
           session signé côté serveur.
@@ -21,4 +22,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
