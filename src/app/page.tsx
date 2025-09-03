@@ -12,6 +12,26 @@ export default function Home() {
           height={38}
           priority
         />
+        <div className="flex gap-3">
+          <a
+            href="/signup"
+            className="rounded-md border border-black/10 dark:border-white/20 px-4 py-2 hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            Inscription
+          </a>
+          <a
+            href="/login"
+            className="rounded-md border border-black/10 dark:border-white/20 px-4 py-2 hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            Connexion
+          </a>
+          <a
+            href="/dashboard"
+            className="rounded-md border border-black/10 dark:border-white/20 px-4 py-2 hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            Dashboard
+          </a>
+        </div>
         <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
             Get started by editing{" "}
